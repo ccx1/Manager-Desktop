@@ -1,5 +1,5 @@
-
-import {GLOBAL_CONFIG} from '../conts/conf';
+import * as config from '@/conts/conf';
+import * as Routers from "@/conts/routers";
 
 /**
  * 返回数据类型
@@ -50,7 +50,7 @@ export default {
      * @return {Promise} 请求
      */
     requestInPromise(options = {}) {
-        const opt = Object.assign({}, {
+        const opt: any = Object.assign({}, {
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
             data: {}
@@ -71,18 +71,16 @@ export default {
                 contentType: opt.contentType,
                 cache: false,
                 success(data) {
-                    // if (data.ret === '0') {
-                        resolve(data);
-                    // }
-                    // else if (data.ret === 'NO_LOGIN') {
-                    //     self.goLogin(data.content);
-                    // }
-                    // else {
-                    //     reject(data.msg);
-                    // }
+                    if (data.code === 200) {
+                        resolve(data.data);
+                    } else if (data.code === 0) {
+                        self.goLogin();
+                    } else {
+                        reject(data.msg);
+                    }
                 },
                 error(xhr, type) {
-                    reject('网络异常');
+                    reject('出现错误,请检查网络后执行');
                 }
             });
         });
@@ -91,15 +89,10 @@ export default {
     /**
      * 登录
      *
-     * @param {string} loginPageUrl 登录地址 URL
-     * @param {string=} url 回跳地址
      */
-    goLogin(loginPageUrl, url) {
-        const currentUrl = url || window.location.href;
-        const redirectUrl = window.location.protocol + '//' + window.location.host
-            + GLOBAL_CONFIG.requestUrl.loginRedirect + '?redirect='
-            + encodeURIComponent(currentUrl);
-        window.location.href = `${loginPageUrl}?service=${encodeURIComponent(redirectUrl)}`;
+    goLogin() {
+        // const redirectUrl = window.location.protocol + '//' + window.location.host + (Routers.basename || '') + '/' + 'user/login';
+        // window.location.href = `${redirectUrl}`;
     },
 
     filterStr(str) {

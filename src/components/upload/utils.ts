@@ -28,4 +28,4 @@ export function getHolderType(type) {
     } else {
         return 'unknown'
     }
-};
+}

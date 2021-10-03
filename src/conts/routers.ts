@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 export const basename = '';
 
 interface IRoute {
@@ -15,7 +16,7 @@ const routerConfig: IRoute[] = [
         exact: true,
         component: '/home',
         name: 'home',
-        title: 'home'
+        title: '首页'
     },
     {
         path: '/home',
@@ -23,6 +24,20 @@ const routerConfig: IRoute[] = [
         component: '/home',
         name: 'home',
         title: '首页'
+    },
+    {
+        path: '/commands',
+        exact: true,
+        component: '/command',
+        name: 'commands',
+        title: '命令行'
+    },
+    {
+        path: '/process',
+        exact: true,
+        component: '/process',
+        name: 'process',
+        title: '进程管理'
     },
     {
         path: '/login',
@@ -48,9 +63,9 @@ function wrapAsyncRoute(componentPath) {
 
 function wrapRoutePath(routers: Array<IRoute>) {
     return routers.map((router) => ({
-            ...router,
-            component:wrapAsyncRoute(router.component)
-        }));
+        ...router,
+        component: wrapAsyncRoute(router.component)
+    }));
 }
 
 // 需要懒加载,因为webpack不支持完全动态注入，所以@拼字符串。然后再动态变量

@@ -3,6 +3,8 @@ import {Button, Icon, message, Modal, Progress} from "antd";
 import './index.less';
 import {getFileType, getHolderType, getTotalSize} from "@/components/upload/utils";
 import {fileRequest} from './uploadRequest'
+import * as PropTypes from "prop-types";
+import UploadList from "@/components/upload/uploadList";
 
 
 interface UploadOptions {
@@ -20,19 +22,18 @@ interface UploadOptions {
 
 
 interface UploadProps {
-    visible: boolean;
-    onCancel?: () => void;
-    onOk?: () => void;
     // 最大的大小 -1 为不限制
     totalSize?: number;
     // 单个文件的最大大小
     singleMaxSize?: number,
     accept: string,
-    uploadOptions: UploadOptions
+    uploadOptions: UploadOptions;
+    onStatusListener?: (index: number, total: number, status: string) => void;
+    uploadBefore?: () => boolean;
 }
 
 
-interface FileInfo {
+export interface FileInfo {
     name: string,
     file: File,
     progress: number,
@@ -61,11 +62,16 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
 
 
     pushFile = (files: Array<File>) => {
-        const {totalSize} = this.props;
+        const {totalSize, singleMaxSize} = this.props;
         let filterList = this.checkList(files);
 
-        if (totalSize !== -1 && (getTotalSize(filterList) + getTotalSize(this.state.fileList) > totalSize)) {
+        if (totalSize !== -1 && singleMaxSize !== -1 && (getTotalSize(filterList) + getTotalSize(this.state.fileList) > singleMaxSize * totalSize)) {
             message.error(`总文件大小不能超过${totalSize}`)
+            return;
+        }
+
+        if (totalSize !== -1 && (filterList.length + this.state.fileList.length) > totalSize) {
+            message.error(`总文件数量不能超过${totalSize}个`)
             return;
         }
 
@@ -91,7 +97,7 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
 
         return fileList.filter(file => {
             const isRepeat = list.find(item => item.file.name === file.name);
-            const isTolarge = file.size > singleMaxSize;
+            const isTolarge = singleMaxSize !== -1 && file.size > singleMaxSize;
             if (isTolarge) {
                 message.error(`${file.name}文件超过${singleMaxSize}，不能添加`);
             }
@@ -101,17 +107,23 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
 
     uploadFile = () => {
         const {fileList} = this.state;
-
+        let {uploadBefore} = this.props;
+        if (uploadBefore) {
+            const isConsumption = uploadBefore();
+            if (isConsumption) {
+                return;
+            }
+        }
         fileList.forEach((item: FileInfo, index) => {
             // 对上次上传成功和失败的文件不再尝试上传
-            if (item.status !== 'success' && item.status !== 'fail') {
+            if (item.status !== "success"/* && item.status !== "fail"*/) {
                 this.uploadFileToRemote(item, index);
             }
         });
     };
 
     uploadFileToRemote = (info: FileInfo, index: number) => {
-        const {uploadOptions} = this.props;
+        const {uploadOptions, onStatusListener} = this.props;
 
         const {fileList} = this.state;
         const fileInfo: FileInfo = fileList[index];
@@ -122,18 +134,21 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
                 fileInfo.progress = progress;
                 fileInfo.status = "uploading";
                 this.setState({fileList: [...fileList]})
+                onStatusListener && onStatusListener(index, fileList.length, 'uploading');
             },
-            onError: () => {
+            onError: (e) => {
                 // 回收
                 delete this.fileRequestList[index];
                 fileInfo.status = "fail";
                 this.setState({fileList: [...fileList]})
+                onStatusListener && onStatusListener(index, fileList.length, 'fail');
             },
             onSuccess: () => {
                 // 回收
                 delete this.fileRequestList[index];
                 fileInfo.status = "success";
                 this.setState({fileList: [...fileList]})
+                onStatusListener && onStatusListener(index, fileList.length, 'success');
             }
         });
     };
@@ -159,9 +174,12 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
             fileList
         });
     };
+    clear = () => {
+        this.setState({fileList: []})
+    };
 
     render() {
-        const {visible, onCancel, onOk, accept} = this.props;
+        const {accept} = this.props;
         const {fileList} = this.state;
         const dropAreaProps = {
             onDragOver: e => e.preventDefault(),
@@ -171,7 +189,7 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
         };
 
         return (
-            <div className={"upload-file"}>
+            <div className={"upload-file-wrapper"}>
                 <input
                     type="file"
                     multiple={true}
@@ -183,69 +201,18 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
                         e.target.value = '';
                     }}
                 />
-                <Modal
-                    className="single-upload-modal"
-                    visible={visible}
-                    onCancel={onCancel}
-                    onOk={onOk}
-                    footer={null}
-                    title="上传文件"
-                    getContainer={false}
-                >
-                    <div className={"upload-file-container"} {...dropAreaProps}>
-                        <ul>
-                            {
-                                fileList && fileList.length > 0 && fileList.map((item: FileInfo, index) => {
-                                    return <li key={index}>
-                                        <div
-                                            className={`upload-item-placeholder upload-item-placeholder-${getHolderType(getFileType(item))}`}>
-                                            {getFileType(item)}
-                                            {
-                                                item.status === 'pending' &&
-                                                <Icon
-                                                    theme="twoTone"
-                                                    twoToneColor="#FF0000"
-                                                    onClick={() => {
-                                                        this.removeFile(index)
-                                                    }}
-                                                    className={"upload-icon-delete"}
-                                                    type="close-circle"
-                                                />
-                                            }
-                                            {
-                                                item.status === 'success' &&
-                                                <Icon
-                                                    theme="twoTone"
-                                                    twoToneColor="#52c41a"
-                                                    type="check-circle"
-                                                />
-                                            }
-                                            {
-                                                item.status === 'fail' &&
-                                                <Icon
-                                                    theme="twoTone"
-                                                    twoToneColor="#FF0000"
-                                                    type="exclamation-circle"
-                                                />
-                                            }
-                                            {item.status === 'uploading' &&
-                                            <div className="progress-wrapper">
-                                                <Progress
-                                                    percent={item.progress}
-                                                    showInfo={false}
-                                                />
-                                            </div>
-                                            }
-                                        </div>
-                                        <p className={"upload-item-name"}>{item.name}</p>
-                                    </li>
-                                })
-                            }
-                        </ul>
-                    </div>
-                    <Button onClick={this.upFiles}>点击选择文件</Button>
-                    <Button type="primary" onClick={this.uploadFile}>上传</Button>
-                </Modal>
+                <div className={"upload-file-container"} {...dropAreaProps}>
+                    <UploadList
+                        accept={accept}
+                        fileList={fileList}
+                        removeFile={this.removeFile}
+                    />
+                </div>
+                <div className={"upload-button-container"}>
+                    <Button onClick={this.clear}>清空</Button>
+                    <Button className={"upload-file-select"} onClick={this.upFiles}>点击选择文件</Button>
+                    <Button className={"upload-file-button"} type="primary" onClick={this.uploadFile}>上传</Button>
+                </div>
             </div>
         );
     }

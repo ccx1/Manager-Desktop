@@ -83,7 +83,6 @@ export function fileRequest(option: UploadRequestOptions) {
             if (e.total > 0) {
                 percent = parseFloat(`${e.loaded / e.total * 100}`).toFixed(2);
             }
-
             option.onProgress(parseFloat(percent));
         };
     }
@@ -94,7 +93,7 @@ export function fileRequest(option: UploadRequestOptions) {
 
     xhr.onload = function onload() {
         const res = parseResponse(xhr);
-        if (xhr.status < 200 || xhr.status >= 300 || (res.ret !== 0 && res.ret !== '0' && res.ret.toUpperCase() !== 'SUCCESS')) {
+        if (xhr.status < 200 || xhr.status >= 300 || (res.code !== 200)) {
             return option.onError(parseError(option, xhr), res);
         }
 

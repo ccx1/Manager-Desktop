@@ -1,88 +1,124 @@
-.upload-file {
+.upload-file-wrapper {
 
-  input {
-    visibility: hidden;
-    position: absolute;
-  }
-
-  .single-upload-modal {
-    width: 800px;
-    height: 500px;
-
-    .upload-file-container {
-      height: 300px;
-      border: 2px solid #d6cfcf;
-      border-radius: 10px;
-      padding: 10px 0;
-
-      ul {
-        padding: 0;
-      }
-
-      li {
-        display: inline-block;
-        text-align: center;
-        width: 78px;
-        margin-left: 10px;
-        margin-bottom: 20px;
-      }
-
-      .upload-item-placeholder-W {
-        background-color: #1067EE;
-        background-image: linear-gradient(to bottom left, #36C0EC, #1067EE);
-      }
-
-      .upload-item-placeholder-X {
-        background-color: #00be0c;
-        background-image: linear-gradient(to bottom left, #7fff78, #10c125);
-      }
-
-      .upload-item-placeholder-unknown{
-        background-color: #c4bbc4;
-        background-image: linear-gradient(to bottom left, #b6babb, #bcbcc1);
-      }
-
-      .upload-item-placeholder {
-        user-select: none;
-        position: relative;
-        margin: 0 auto;
-        width: 78px;
-        height: 78px;
-        border-radius: 10px;
-        color: white;
-        font-size: 25px;
-        text-align: center;
-        line-height: 78px;
-
-        i {
-          position: absolute;
-          width: 24px;
-          height: 24px;
-          top: -7px;
-          right: -7px;
-        }
-
-        .upload-icon-delete {
-          display: none;
-        }
-
-        &:hover {
-          .upload-icon-delete {
-            display: inline;
-          }
-        }
-      }
-
-      .upload-item-name {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-size: 14px;
-        line-height: 1;
-        margin-top: 10px;
-      }
+    input {
+        visibility: hidden;
+        position: absolute;
     }
 
 
-  }
+    .upload-file-container {
+        height: 300px;
+        border: 2px solid #d6cfcf;
+        border-radius: 10px;
+        padding: 10px 0;
+        overflow-y: auto;
+
+
+        ul {
+            padding: 0;
+        }
+
+        .upload-tips {
+            text-align: center;
+            user-select: none;
+
+            i {
+                margin-top: 80px;
+                display: block;
+                width: 40px;
+                height: 20px;
+            }
+
+            p {
+                margin: 0;
+                font-size: 12px;
+                opacity: .7;
+                color: #1c2848;
+                line-height: 18px;
+            }
+        }
+
+        li {
+            display: inline-block;
+            text-align: center;
+            width: 78px;
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+
+        .upload-item-placeholder-W {
+            background-color: #1067EE;
+            background-image: linear-gradient(to bottom left, #36C0EC, #1067EE);
+        }
+
+        .upload-item-placeholder-X {
+            background-color: #00be0c;
+            background-image: linear-gradient(to bottom left, #7fff78, #10c125);
+        }
+
+        .upload-item-placeholder-unknown {
+            background-color: #c4bbc4;
+            background-image: linear-gradient(to bottom left, #b6babb, #bcbcc1);
+        }
+
+        .upload-item-placeholder {
+            user-select: none;
+            position: relative;
+            margin: 0 auto;
+            width: 78px;
+            height: 78px;
+            border-radius: 10px;
+            color: white;
+            font-size: 25px;
+            text-align: center;
+            line-height: 78px;
+
+            i {
+                position: absolute;
+                width: 24px;
+                height: 24px;
+                top: -7px;
+                right: -7px;
+            }
+
+            .upload-icon-delete {
+                display: none;
+            }
+
+            &:hover {
+                .upload-icon-delete {
+                    display: inline;
+                }
+            }
+        }
+
+        .upload-item-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 14px;
+            line-height: 1;
+            margin-top: 10px;
+        }
+    }
+
+    .upload-button-container {
+        margin: 30px 0 0;
+        position: relative;
+
+        .upload-file-select {
+            margin-right: 20px;
+            position: absolute;
+            right: 60px;
+        }
+
+        .upload-file-button {
+            position: absolute;
+            right: 0;
+        }
+
+        button {
+            border-radius: 20px;
+        }
+    }
 }

@@ -1,27 +1,50 @@
 html, body {
-  height: 100%;
-  padding: 0;
-  border: 0;
-  margin: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    margin: 0;
 }
 
 
 h1, h2, h3, h4, h5, h6 {
-  text-align: center;
+    text-align: center;
 }
 
 #root {
-  height: 100%;
-  background-color: #FFFFFF;
-  overflow: hidden;
-  .ant-spin-nested-loading {
-    position: relative;
     height: 100%;
-    .ant-spin-container {
-      position: relative;
-      transition: opacity 0.3s;
-      height: 100%;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+
+    .ant-spin-nested-loading {
+        position: relative;
+        height: 100%;
+
+        .ant-spin-container {
+            position: relative;
+            transition: opacity 0.3s;
+            height: 100%;
+        }
     }
-  }
+
+    .app-wrapper-left {
+        position: relative;
+        height: 100%;
+
+        .app-wrapper-left-drag-line {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #dddddd;
+            cursor: e-resize;
+        }
+    }
+
+    .app-wrapper-right {
+        flex: 1;
+    }
 }
 

@@ -1,7 +1,14 @@
 export const GLOBAL_CONFIG = {
     requestUrl: {
-        // 获取项目列表
-        getProject: '/test/initConfig',
-        getJobInfo: '/test/bd_logo1.png?qua=high',
+        fileUrl: {
+            list: '/feManager/file/list',
+            deleteFile: '/feManager/file/delete',
+            uploadFile: '/feManager/file/upload'
+        },
+        processUrl: {
+            runCommand : '/feManager/process/cmd',
+            list : '/feManager/process/list'
+
+        }
     }
 };

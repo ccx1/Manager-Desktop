@@ -10,6 +10,9 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = merge.smart(baseWebpackConfig, {
     mode: 'production',
+    output: {
+        publicPath: './',
+    },
     plugins: [
         new CleanWebpackPlugin({
             verbose: true,
