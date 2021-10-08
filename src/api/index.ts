@@ -49,9 +49,18 @@ export const runCommand = (params) => (
     })
 );
 
-export const getProcess = () => (
+export const getProcess = (params) => (
     common.requestInPromise({
-        url: GLOBAL_CONFIG.requestUrl.processUrl.list
+        url: GLOBAL_CONFIG.requestUrl.processUrl.list,
+        data: params
+    })
+);
+
+
+export const killProcess = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.processUrl.kill,
+        data: params
     })
 );
 

@@ -17,14 +17,14 @@ module.exports = merge.smart(baseWebpackConfig, {
             'Access-Control-Allow-Origin': '*'
         },
         proxy: {
-            '/feManager': {
-                target: 'http://10.11.82.75:42095',
+            '/manager': {
+                target: 'http://127.0.0.1:42095',
                 changeOrigin: true,
                 secure: false,
                 // 替换包含test的接口
-                pathRewrite: {
-                    '^/feManager': ''
-                }
+                // pathRewrite: {
+                //     '^/manager': ''
+                // }
             }
         }
     },

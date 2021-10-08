@@ -13,7 +13,7 @@ import {MutableRefObject, useEffect, useRef, useState} from "react";
 const App: React.FC = (props: any) => {
 
     const minWidth = 200;
-    const routineWidth = 300;
+    const routineWidth = 220;
     const maxWidth = 500;
 
     const [mouseDownX, setMouseDownX] = useState(0);
