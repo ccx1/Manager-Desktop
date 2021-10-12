@@ -4,6 +4,7 @@ import {IPageInfo} from "@/reducer/BasicReducer";
 import {Input, message, Table} from "antd";
 import './index.less';
 import * as api from "@/api"
+import {kProcess} from "@/api";
 
 interface IProcessSource {
     cmd: string;
@@ -70,7 +71,7 @@ class Process extends React.Component<IProcessProps, IProcessState> {
                         render: (text, record, index) => {
                             return <div className="process-wrapper-table-option">
                                 <a onClick={() => {
-                                    api.killProcess({
+                                    api.kProcess({
                                         pid: record.ppid
                                     }).then(() => {
                                         message.success("关闭成功")

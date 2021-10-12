@@ -7,6 +7,7 @@ import './index.less'
 import {UploadFile} from "@/components/upload";
 import {GLOBAL_CONFIG} from '@/conts/conf'
 import {Checkbox, message, Modal} from "antd";
+import {unZipFile} from "@/api";
 
 interface FileInfo {
     id: string;
@@ -99,10 +100,22 @@ class Home extends React.Component<IHomeProps, IHomeState> {
             }
             this.setState({
                 fileList: res.fileInfo,
-                currentPath
+                currentPath,
+                checkIds: []
             })
         }).catch(e => {
 
+        })
+    }
+
+    unZipFile = (id) => {
+        api.unZipFile({
+            targetId: id
+        }).then((res: any) => {
+            message.success('成功')
+            this.refresh()
+        }).catch(e => {
+            message.error(e)
         })
     }
 
@@ -140,9 +153,9 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                     下载
                 </a>}
 
-                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={()=>{
+                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
                     this.setState({
-                        deleteModalVisible:true
+                        deleteModalVisible: true
                     })
                 }}>
                     删除
@@ -155,6 +168,11 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                                 <div className="home-file-info" onClick={() => {
                                     if (!item.file) {
                                         this.getFileList(item.id);
+                                        return;
+                                    }
+                                    if (item.file && item.name.indexOf('.zip') > -1) {
+                                        this.unZipFile(item.id);
+                                        return;
                                     }
                                 }}>
                                     <img src={item.extendImage}/>

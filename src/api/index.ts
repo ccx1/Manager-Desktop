@@ -31,6 +31,14 @@ export const getFileList = (params) => (
     })
 );
 
+export const unZipFile = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.fileUrl.unZip,
+        data: params,
+        type: 'POST'
+    })
+);
+
 
 export const deleteFile = (params) => (
     common.requestInPromise({
@@ -49,19 +57,20 @@ export const runCommand = (params) => (
     })
 );
 
-export const getProcess = (params) => (
-    common.requestInPromise({
-        url: GLOBAL_CONFIG.requestUrl.processUrl.list,
-        data: params
-    })
-);
 
-
-export const killProcess = (params) => (
+export const kProcess = (params) => (
     common.requestInPromise({
         url: GLOBAL_CONFIG.requestUrl.processUrl.kill,
         data: params
     })
 );
 
+
+
+export const getProcess = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.processUrl.list,
+        data: params
+    })
+);
 
