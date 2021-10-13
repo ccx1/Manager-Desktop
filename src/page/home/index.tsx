@@ -6,7 +6,7 @@ import * as api from '@/api';
 import './index.less'
 import {UploadFile} from "@/components/upload";
 import {GLOBAL_CONFIG} from '@/conts/conf'
-import {Checkbox, message, Modal} from "antd";
+import {Checkbox, Input, message, Modal} from "antd";
 import {unZipFile} from "@/api";
 
 interface FileInfo {
@@ -22,6 +22,8 @@ interface IHomeState {
     currentPath: Array<string>;
     visible: boolean;
     deleteModalVisible: boolean;
+    renameVisible: boolean;
+    renameVal: string;
     checkIds: Array<string>;
 }
 
@@ -38,6 +40,8 @@ class Home extends React.Component<IHomeProps, IHomeState> {
         currentPath: [],
         visible: false,
         deleteModalVisible: false,
+        renameVisible: false,
+        renameVal: '',
         checkIds: []
     };
 
@@ -72,6 +76,30 @@ class Home extends React.Component<IHomeProps, IHomeState> {
             }
         }
         window.open(`http://127.0.0.1:8051/file/download?targetIds=${encodeURIComponent(temp)}`)
+    }
+
+    renameFile = () => {
+        const {checkIds, renameVal} = this.state;
+        if (checkIds.length > 1) {
+            message.error("重命名只允许一个文件")
+            return;
+        }
+        if (!renameVal) {
+            message.error("请输入新的名字")
+            return;
+        }
+        api.renameFile({
+            targetId: checkIds[0],
+            newName: renameVal
+        }).then(res => {
+            message.success("成功")
+            this.setState({
+                renameVal: ''
+            });
+            this.refresh();
+        })
+
+
     }
 
 
@@ -137,7 +165,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
 
     render() {
-        const {fileList, currentPath, visible, checkIds, deleteModalVisible} = this.state;
+        const {fileList, currentPath, visible, checkIds, deleteModalVisible, renameVisible, renameVal} = this.state;
         return (
             <React.Fragment>
                 {currentPath.length > 0 && <a onClick={() => this.goBack()}>返回上一级</a>}
@@ -151,6 +179,13 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                 </a>
                 {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={this.downloadFile}>
                     下载
+                </a>}
+                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
+                    this.setState({
+                        renameVisible: true
+                    })
+                }}>
+                    重命名
                 </a>}
 
                 {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
@@ -203,6 +238,20 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                        getContainer={false}
                 >
                     确认要删除吗?
+                </Modal>
+                <Modal visible={renameVisible}
+                       onCancel={() => this.setState({renameVisible: false})}
+                       onOk={() => {
+                           this.renameFile()
+                       }}
+                       title="重命名"
+                       getContainer={false}
+                >
+                    <Input value={renameVal} onChange={(e) => {
+                        this.setState({
+                            renameVal: e.target.value
+                        })
+                    }}/>
                 </Modal>
                 <Modal visible={visible}
                        onCancel={() => this.setState({visible: false})}

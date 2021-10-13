@@ -49,6 +49,15 @@ export const deleteFile = (params) => (
 );
 
 
+export const renameFile = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.fileUrl.rename,
+        data: params,
+        type: 'POST'
+    })
+);
+
+
 export const runCommand = (params) => (
     common.requestInPromise({
         url: GLOBAL_CONFIG.requestUrl.processUrl.runCommand,

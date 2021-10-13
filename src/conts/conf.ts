@@ -4,7 +4,8 @@ export const GLOBAL_CONFIG = {
             list: '/manager/file/list',
             deleteFile: '/manager/file/delete',
             uploadFile: '/manager/file/upload',
-            unZip: '/manager/file/unZip'
+            unZip: '/manager/file/unZip',
+            rename: '/manager/file/rename'
         },
         processUrl: {
             runCommand: '/manager/process/cmd',
