@@ -7,7 +7,7 @@ import './index.less'
 import {UploadFile} from "@/components/upload";
 import {GLOBAL_CONFIG} from '@/conts/conf'
 import {Checkbox, Input, message, Modal} from "antd";
-import {unZipFile} from "@/api";
+import {FilesTree} from "@/components/filesTree";
 
 interface FileInfo {
     id: string;
@@ -22,6 +22,7 @@ interface IHomeState {
     currentPath: Array<string>;
     visible: boolean;
     deleteModalVisible: boolean;
+    moveModalVisible: boolean;
     renameVisible: boolean;
     renameVal: string;
     checkIds: Array<string>;
@@ -40,6 +41,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
         currentPath: [],
         visible: false,
         deleteModalVisible: false,
+        moveModalVisible: false,
         renameVisible: false,
         renameVal: '',
         checkIds: []
@@ -75,7 +77,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                 temp += (',' + checkIds[i]);
             }
         }
-        window.open(`http://127.0.0.1:8051/file/download?targetIds=${encodeURIComponent(temp)}`)
+        window.open(`${window.location.protocol}//${window.location.host}/manager/file/download?targetIds=${encodeURIComponent(temp)}`)
     }
 
     renameFile = () => {
@@ -121,7 +123,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
     getFileList = (id?) => {
         const {currentPath} = this.state;
         api.getFileList({
-            targetId: id || ''
+            targetId: encodeURIComponent(id || '')
         }).then((res: any) => {
             if (res.currentPath && !currentPath.find(n => n === res.currentPath)) {
                 currentPath.push(res.currentPath)
@@ -148,6 +150,29 @@ class Home extends React.Component<IHomeProps, IHomeState> {
     }
 
 
+    moveFile = () => {
+        const {checkIds} = this.state;
+        if (checkIds.length > 1) {
+            message.error("同时只允许移动一个文件")
+            return;
+        }
+        let fileTree: any = this.refs.fileTree;
+        api.moveFile({
+            originId: checkIds[0],
+            targetId: fileTree.getSelectId() || ''
+        }).then((res: any) => {
+            message.success('成功')
+            this.setState({
+                moveModalVisible: false
+            }, () => {
+                this.refresh()
+            })
+        }).catch(e => {
+            message.error(e)
+        })
+    }
+
+
     onItemCheckChange = (id, e) => {
         const {checkIds} = this.state;
         if (e.target.checked) {
@@ -165,7 +190,16 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
 
     render() {
-        const {fileList, currentPath, visible, checkIds, deleteModalVisible, renameVisible, renameVal} = this.state;
+        const {
+            fileList,
+            currentPath,
+            visible,
+            checkIds,
+            deleteModalVisible,
+            renameVisible,
+            renameVal,
+            moveModalVisible
+        } = this.state;
         return (
             <React.Fragment>
                 {currentPath.length > 0 && <a onClick={() => this.goBack()}>返回上一级</a>}
@@ -187,6 +221,13 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                 }}>
                     重命名
                 </a>}
+                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
+                    this.setState({
+                        moveModalVisible: true
+                    })
+                }}>
+                    移动至
+                </a>}
 
                 {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
                     this.setState({
@@ -200,7 +241,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                     {
                         fileList.map((item: FileInfo, index: number) =>
                             <div key={index} className="home-file-wrapper">
-                                <div className="home-file-info" onClick={() => {
+                                <div className="home-file-info" onDoubleClick={() => {
                                     if (!item.file) {
                                         this.getFileList(item.id);
                                         return;
@@ -275,10 +316,21 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                             action: GLOBAL_CONFIG.requestUrl.fileUrl.uploadFile
                         }}/>
                 </Modal>
+                <Modal visible={moveModalVisible}
+                       onCancel={() => {
+                           this.setState({moveModalVisible: false})
+                       }}
+                       onOk={() => {
+                           this.moveFile();
+                       }}
+                >
+                    <FilesTree ref={"fileTree"}/>
+                </Modal>
             </React.Fragment>
 
         );
     }
+
 }
 
 const mapStateToProps = state => {

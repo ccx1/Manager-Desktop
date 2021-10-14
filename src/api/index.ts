@@ -40,6 +40,15 @@ export const unZipFile = (params) => (
 );
 
 
+export const moveFile = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.fileUrl.move,
+        data: params,
+        type: 'POST'
+    })
+);
+
+
 export const deleteFile = (params) => (
     common.requestInPromise({
         url: GLOBAL_CONFIG.requestUrl.fileUrl.deleteFile,

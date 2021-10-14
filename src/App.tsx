@@ -1,4 +1,4 @@
-import {BrowserRouter, Link} from 'react-router-dom';
+import {BrowserRouter, Link, HashRouter} from 'react-router-dom';
 import '@/App.less';
 import * as React from "react";
 import * as Routers from '@/conts/routers.ts';
@@ -52,7 +52,7 @@ const App: React.FC = (props: any) => {
     return (<Provider store={props.store}>
         <React.Suspense fallback={<Spin style={
             {width: '100%', height: '100%', paddingTop: '20%'}}/>}>
-            <BrowserRouter
+            <HashRouter
                 basename={Routers.basename}>
                 <div className="app-wrapper-left" ref={leftRef} style={{width: width}}>
                     <div>
@@ -74,7 +74,7 @@ const App: React.FC = (props: any) => {
                         renderRoutes(Routers.routers)
                     }
                 </div>
-            </BrowserRouter>
+            </HashRouter>
         </React.Suspense>
     </Provider>)
 };
