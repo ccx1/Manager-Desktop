@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Tree} from "antd";
 import * as api from "@/api";
+import './index.less';
 
 interface IFileList {
     name: string;
@@ -12,6 +13,7 @@ interface IFileList {
 interface IFileState {
     selectId: string;
     fileList: Array<IFileList>;
+    currentPath: string;
 }
 
 
@@ -33,7 +35,8 @@ export class FilesTree extends React.Component<any, IFileState> {
 
     state = {
         fileList: [],
-        selectId: ''
+        selectId: '',
+        currentPath: ''
     }
 
 
@@ -49,7 +52,7 @@ export class FilesTree extends React.Component<any, IFileState> {
             targetId: encodeURIComponent(id || '')
         }).then((res: any) => {
             if (id) {
-                let extend = $.extend(fileList, []);
+                const extend = $.extend(fileList, []);
                 const find = this.findItem(id, extend);
                 if (find) {
                     find.children = res.fileInfo;
@@ -62,7 +65,8 @@ export class FilesTree extends React.Component<any, IFileState> {
             }
             this.setState({
                 fileList: res.fileInfo,
-                selectId: id || ''
+                selectId: id || '',
+                currentPath: res.currentPath
             })
         }).catch(e => {
 
@@ -94,18 +98,19 @@ export class FilesTree extends React.Component<any, IFileState> {
         this.getFileList(selectedKeys[0]);
     };
 
-    getSelectId = () =>{
+    getSelectId = () => {
         const {selectId} = this.state;
         return selectId;
     }
 
     render() {
-        let {fileList} = this.state;
-        return <div>
+        let {fileList, currentPath} = this.state;
+        return <div className="file-tree-wrapper">
             <Tree
                 onSelect={this.onSelect}
                 blockNode
             >
+                <Tree.TreeNode key={`${currentPath}`} title="根目录"/>
                 {
                     loop(fileList)
                 }

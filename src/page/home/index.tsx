@@ -96,7 +96,8 @@ class Home extends React.Component<IHomeProps, IHomeState> {
         }).then(res => {
             message.success("成功")
             this.setState({
-                renameVal: ''
+                renameVal: '',
+                renameVisible: false
             });
             this.refresh();
         })
@@ -214,14 +215,16 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                 {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={this.downloadFile}>
                     下载
                 </a>}
-                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
+                {checkIds.length === 1 && <a style={{marginLeft: 20}} onClick={() => {
+                    let {checkIds, fileList} = this.state;
                     this.setState({
-                        renameVisible: true
+                        renameVisible: true,
+                        renameVal: fileList.find(n => n.id === checkIds[0]).name
                     })
                 }}>
                     重命名
                 </a>}
-                {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
+                {checkIds.length === 1 && <a style={{marginLeft: 20}} onClick={() => {
                     this.setState({
                         moveModalVisible: true
                     })
