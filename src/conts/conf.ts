@@ -6,6 +6,7 @@ export const GLOBAL_CONFIG = {
             uploadFile: '/manager/file/upload',
             unZip: '/manager/file/unZip',
             move: '/manager/file/move',
+            recycle: '/manager/file/recycle',
             rename: '/manager/file/rename'
         },
         processUrl: {

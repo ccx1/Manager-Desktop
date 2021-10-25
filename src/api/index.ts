@@ -49,6 +49,17 @@ export const moveFile = (params) => (
 );
 
 
+
+export const recycle = (params) => (
+    common.requestInPromise({
+        url: GLOBAL_CONFIG.requestUrl.fileUrl.recycle,
+        data: params,
+        type: 'POST'
+    })
+
+);
+
+
 export const deleteFile = (params) => (
     common.requestInPromise({
         url: GLOBAL_CONFIG.requestUrl.fileUrl.deleteFile,

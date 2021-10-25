@@ -161,7 +161,7 @@ export class UploadFile extends React.PureComponent<UploadProps, UploadState> {
         const fileTypeArr = fileList[0] && fileList[0].name.split('.') || [];
         const type = '.' + fileTypeArr[fileTypeArr.length - 1];
         let acceptList = accept.split(',');
-        if (!fileList.length || !acceptList.includes(type.toLowerCase())) {
+        if (!fileList.length || (!!accept &&!acceptList.includes(type.toLowerCase()))) {
             return;
         }
         this.pushFile(fileList);

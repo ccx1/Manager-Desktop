@@ -23,6 +23,7 @@ interface IHomeState {
     visible: boolean;
     deleteModalVisible: boolean;
     moveModalVisible: boolean;
+    moveRecycleModalVisible: boolean;
     renameVisible: boolean;
     renameVal: string;
     checkIds: Array<string>;
@@ -42,6 +43,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
         visible: false,
         deleteModalVisible: false,
         moveModalVisible: false,
+        moveRecycleModalVisible: false,
         renameVisible: false,
         renameVal: '',
         checkIds: []
@@ -169,7 +171,22 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                 this.refresh()
             })
         }).catch(e => {
-            message.error(e)
+        })
+    }
+
+
+    recycle = () => {
+        const {checkIds} = this.state;
+        api.recycle({
+            targetIds: checkIds
+        }).then((res: any) => {
+            message.success('成功')
+            this.setState({
+                moveRecycleModalVisible: false
+            }, () => {
+                this.refresh()
+            })
+        }).catch(e => {
         })
     }
 
@@ -199,7 +216,8 @@ class Home extends React.Component<IHomeProps, IHomeState> {
             deleteModalVisible,
             renameVisible,
             renameVal,
-            moveModalVisible
+            moveModalVisible,
+            moveRecycleModalVisible
         } = this.state;
         return (
             <React.Fragment>
@@ -230,6 +248,14 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                     })
                 }}>
                     移动至
+                </a>}
+
+                {checkIds.length >= 1 && <a style={{marginLeft: 20}} onClick={() => {
+                    this.setState({
+                        moveRecycleModalVisible: true
+                    })
+                }}>
+                    放入回收站
                 </a>}
 
                 {checkIds.length > 0 && <a style={{marginLeft: 20}} onClick={() => {
@@ -282,6 +308,17 @@ class Home extends React.Component<IHomeProps, IHomeState> {
                        getContainer={false}
                 >
                     确认要删除吗?
+                </Modal>
+
+                <Modal visible={moveRecycleModalVisible}
+                       onCancel={() => this.setState({moveRecycleModalVisible: false})}
+                       onOk={() => {
+                           this.recycle();
+                       }}
+                       title="移入回收站"
+                       getContainer={false}
+                >
+                    确认要移入回收站吗?(回收站文件有效期30天)
                 </Modal>
                 <Modal visible={renameVisible}
                        onCancel={() => this.setState({renameVisible: false})}

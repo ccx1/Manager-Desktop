@@ -1,5 +1,4 @@
-import * as config from '@/conts/conf';
-import * as Routers from "@/conts/routers";
+import {message} from "antd";
 
 /**
  * 返回数据类型
@@ -76,6 +75,7 @@ export default {
                     } else if (data.code === 0) {
                         self.goLogin();
                     } else {
+                        message.error(data.msg)
                         reject(data.msg);
                     }
                 },
@@ -91,8 +91,9 @@ export default {
      *
      */
     goLogin() {
-        // const redirectUrl = window.location.protocol + '//' + window.location.host + (Routers.basename || '') + '/' + 'user/login';
-        // window.location.href = `${redirectUrl}`;
+        const redirectUrl = `${window.location.protocol}//${window.location.host}/manager/login?redirect=${encodeURIComponent(window.location.href)}`;
+        window.location.href = `${redirectUrl}`;
+        // console.log(window.location)
     },
 
     filterStr(str) {
